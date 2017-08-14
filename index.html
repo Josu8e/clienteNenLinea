@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="">
+
+
+	<title>N en linea</title>
+</head>
+<body>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '420755368318973',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();   
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+
+<h1>N en linea</h1>
+<p class="info"> N en linea es un juego de dos jugadores, se puede jugar con un adversario en el mismo computador.</p>
+<div class="fb-login-button" data-width="30px" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="true"></div>
+
+
+<form>
+  <input type="number" id="tabla" placeholder="Defina el tamaño de la tabla"><br>
+  <br>
+  <button onclick="newgame()" id="Jugar">Jugar</button>
+ </form>
+ <br>
+ <br>
+ <br>
+ <br>
+  <div id="game-table">
+    
+  </div>
+</div><!-- end base -->
+
+</body>
+<footer>
+<script src="logica2.js"></script>
+
+</footer>
+</html>
