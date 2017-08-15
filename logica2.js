@@ -1,14 +1,17 @@
 var gameField = new Array();
+// Arreglo para almacenar los discos
+var allDiscs = new Array();
 var board = document.getElementById("game-table");
 var currentCol;
 var currentRow;
 var currentPlayer;
 var id = 1;
-var boardSize = 10;
+var boardSize = 8;
 console.log(14+boardSize*60);
 document.getElementById("game-table").style.height = 14+boardSize*60 + 'px';
 document.getElementById("game-table").style.width = 14+boardSize*60 + 'px';
 
+var WS = "http://nenlinea-rails.herokuapp.com/";
 
 newgame();
 
@@ -17,6 +20,8 @@ function newgame(){
   prepareField();
   placeDisc(Math.floor(Math.random()*2)+1);
 }
+
+
 
 function Disc(player){
   this.player = player;
@@ -34,6 +39,12 @@ function Disc(player){
       //document.getElementById('d'+this.id).style.left = (14+60*currentCol)+"px";
       //dropDisc(this.id,currentPlayer);
     //}
+  }
+
+  // Elimina el disco de la vista
+  this.removeToScene = function(){
+    var disc = document.getElementById("d" + this.id);
+    board.removeChild(disc);
   }
   
   var $this = this;
@@ -57,11 +68,39 @@ function Disc(player){
   }
   
   document.onclick = function(evt){
-    //if(currentPlayer == 1){
-      //if(possibleColumns().indexOf(currentCol) != -1){
-        dropDisc($this.id,$this.player);
-      
-    //}
+       
+        dropDisc($this.id, $this.player);
+          // Consulta al ws
+          verificarJugada();
+        }
+    
+}
+
+function verificarJugada(){
+  $.get(WS + "logica/mover/" + currentCol, function(data){
+    console.log(data['fichas_ganadoras']);
+    if(data['game_state'] != 'Playing'){
+      alert('Gano ' + data['turno']);
+      // Se limpia el tablero
+      removeDiscs();
+      newgame();
+      // Se crea una nueva partida del juego
+      $.get(WS + "logica/new/8/4", function(data){
+        console.log(data);
+      })
+    }
+  });
+
+}
+
+var click = document.onclick;
+
+function setClick(state){
+  if(!state){
+    document.onclick = function(){return false;}
+  }
+  else{
+    document.onclick = click;
   }
 }
 
@@ -84,6 +123,15 @@ function placeDisc(player){
   currentPlayer = player;
   var disc = new Disc(player);
   disc.addToScene();
+  allDiscs.push(disc);
+}
+
+// Quita todos los discos de la vista
+function removeDiscs(){
+  for(var i = allDiscs.length - 1; i >= 0; i--) {
+    allDiscs[i].removeToScene()
+    allDiscs.splice(i, 1);
+  } 
 }
 
 function prepareField(){
