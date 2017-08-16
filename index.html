@@ -2,40 +2,34 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="google-signin-client_id" content="185659328824-8ic83csdqrlaho7ftk2ufskhst30h3ic.apps.googleusercontent.com">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="">
   <title>N en linea</title>
 </head>
 <body id = "body">
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '420755368318973',
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v2.8'
-    });
-    FB.AppEvents.logPageView();   
-  };
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 
 
 <h1>N en linea</h1>
 <p class="info"> N en linea es un juego de dos jugadores, se puede jugar con un adversario en el mismo computador.</p>
-<div class="fb-login-button" data-width="30px" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="true"></div>
+
 
 
 <form>
+	<div class="g-signin2" data-onsuccess="onSignIn" id="google"></div>
+	<div id="login">
+  		
+
+  	</div>
+  	<br>
+
   <input type="number" id="tabla" placeholder="Defina el tamaño de la tabla"><br>
+  <br>
+  <input type="number" id="tabla" placeholder="Defina la cantidad de fichas a conectar">
+  <br>
   <br>
   <button onclick="newgame()" id="Jugar">Jugar</button>
  </form>
@@ -52,6 +46,7 @@
 <footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
 <script src="logica2.js"></script>
+
 
 </footer>
 </html>

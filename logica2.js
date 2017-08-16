@@ -7,16 +7,17 @@ var currentRow;
 var currentPlayer;
 var id = 1;
 var boardSize = 8;
-console.log(14+boardSize*60);
-document.getElementById("game-table").style.height = 14+boardSize*60 + 'px';
-document.getElementById("game-table").style.width = 14+boardSize*60 + 'px';
+
 
 var WS = "http://nenlinea-rails.herokuapp.com/";
 
-newgame();
+//newgame();
 
 function newgame(){
-  //boardSize = parseInt(document.getElementById("tabla").value);
+  boardSize = parseInt(document.getElementById("tabla").value);
+  console.log(14+boardSize*60);
+  document.getElementById("game-table").style.height = 14+boardSize*60 + 'px';
+  document.getElementById("game-table").style.width = 14+boardSize*60 + 'px';
   prepareField();
   placeDisc(Math.floor(Math.random()*2)+1);
 }
@@ -167,3 +168,16 @@ function firstFreeRow(col,player){
   gameField[i-1][col] = player;
   return i-1;
 }
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  //console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  //console.log('Name: ' + profile.getName());
+  //console.log('Image URL: ' + profile.getImageUrl());
+  //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  
+  var log = document.getElementById("login");
+  log.innerHTML += '<img src="'+profile.getImageUrl+'" id = "imagen"><p id="imagen">'+profile.getName()+'</p>';
+  console.log('<img src="'+profile.getImageUrl()+'" id = "imagen">');
+}
+
