@@ -7,6 +7,7 @@ var currentRow;
 var currentPlayer;
 var id = 1;
 var boardSize = 8;
+var nsize = 4;
 
 
 var WS = "http://nenlinea-rails.herokuapp.com/";
@@ -15,9 +16,14 @@ var WS = "http://nenlinea-rails.herokuapp.com/";
 
 function newgame(){
   boardSize = parseInt(document.getElementById("tabla").value);
+  nsize = parseInt(document.getElementById("tabla_n").value);
   console.log(14+boardSize*60);
   document.getElementById("game-table").style.height = 14+boardSize*60 + 'px';
   document.getElementById("game-table").style.width = 14+boardSize*60 + 'px';
+  console.log(WS + "logica/new/"+boardSize+"/"+nsize);
+  $.get(WS + "logica/new/"+boardSize+"/"+nsize, function(data){
+        console.log(data);
+      })
   prepareField();
   placeDisc(Math.floor(Math.random()*2)+1);
 }
@@ -86,7 +92,7 @@ function verificarJugada(){
       removeDiscs();
       newgame();
       // Se crea una nueva partida del juego
-      $.get(WS + "logica/new/8/4", function(data){
+      $.get(WS + "logica/new/"+boardSize+"/"+nsize, function(data){
         console.log(data);
       })
     }
@@ -177,7 +183,8 @@ function onSignIn(googleUser) {
   //console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   
   var log = document.getElementById("login");
-  log.innerHTML += '<img src="'+profile.getImageUrl+'" id = "imagen"><p id="imagen">'+profile.getName()+'</p>';
+  log.innerHTML = "";
+  log.innerHTML = '<img src="'+profile.getImageUrl+'" id = "imagen"><p id="imagen">'+profile.getName()+'</p>';
   console.log('<img src="'+profile.getImageUrl()+'" id = "imagen">');
 }
 
