@@ -15,8 +15,30 @@ var WS = "http://nenlinea-rails.herokuapp.com/";
 //newgame();
 
 function newgame(){
-  boardSize = parseInt(document.getElementById("tabla").value);
-  nsize = parseInt(document.getElementById("tabla_n").value);
+
+      
+  removeDiscs();
+
+  boardSize = document.getElementById("tabla").value;
+  nsize = document.getElementById("tabla_n").value;
+
+  if(boardSize === ""){
+    boardSize = 8;
+  }
+  else{
+    boardSize = parseInt(boardSize);
+  }
+
+  if(nsize === ""){
+    nsize = 4;
+  }
+  else{
+    nsize = parseInt(nsize);
+  }
+
+
+
+
   console.log(14+boardSize*60);
   document.getElementById("game-table").style.height = 14+boardSize*60 + 'px';
   document.getElementById("game-table").style.width = 14+boardSize*60 + 'px';
@@ -89,12 +111,11 @@ function verificarJugada(){
     if(data['game_state'] != 'Playing'){
       alert('Gano ' + data['turno']);
       // Se limpia el tablero
-      removeDiscs();
-      newgame();
+      //newgame();
       // Se crea una nueva partida del juego
-      $.get(WS + "logica/new/"+boardSize+"/"+nsize, function(data){
-        console.log(data);
-      })
+      //$.get(WS + "logica/new/"+boardSize+"/"+nsize, function(data){
+        //console.log(data);
+      //})
     }
   });
 
