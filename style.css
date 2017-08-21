@@ -1,89 +1,124 @@
-body{
-  background:#eee;
+header{
+	text-align: right;
 }
 
-h1{
-  text-align:center;
-  margin-bottom:5px;
+
+.cell{
+	width:50px;
+	height:50px;
+	position:relative;
+	overflow:hidden;
+	float:left;
+	border:10px solid rgb(69, 170, 184)
 }
 
-p.info{
-  text-align:center;
-  width:400px;
-  margin:0 auto;
-  font-size:12px;
-  font-weight:bold;
-  color:#666;
-  margin-bottom:20px;
+.cell:before{
+	content: '';
+	position: absolute;
+	bottom: 0%;
+	width: 100%;
+	height: 100%;
+	border-radius: 100%;
+	box-shadow: 0px 300px 0px 345px rgb(69, 170, 184);
 }
 
-#game-base{
-  width:640px;  
-  margin:0 auto;
-  padding-top:60px;
+p {
+	clear:both;
+	margin:0;
 }
 
-#game-table{
-  /*width:498px;
-  height:498px;*/
-  margin:0 auto;
-  background:url("http://img.sr/images/2014/01/28/base.png") 0 0 no-repeat;
-  position:relative;
-  box-shadow: 2px 11px 19px 9px #888888;
+/* No tocar !!! */
+.board {
+	width:600px;
+	margin:0 auto;
+	position:relative;
+	background:white;
 }
 
-.disc{
-  position:absolute;
-  z-index:-1;
-  top:-55px;
-  left:14px;
-  width:46px;
-  height:46px;
-  border-radius:46px;
-  transition:all .3s;
-  /*border-left: 100px solid #f0ad4e;
-  border-top: 50px solid transparent;
-  border-bottom: 50px solid transparent; */
+.leftFoot, .rightFoot {
+	background-color:rgb(69, 170, 184);
+	width:30px;
+	height:100px;
+	float:left;
 }
 
-.disc.red{
-  background:#d96666;
+.leftFoot {
+	margin-left:-20px;
+}
+.rightFoot {
+	float:right;
+	margin-right:-20px;
 }
 
-.disc.yellow{
-  background:#ffeb79;
+.leftFoot:after, .rightFoot:after {
+	content:' ';
+	width: 0; 
+	height: 0; 
+	border-left: 35px solid transparent;
+	border-right: 35px solid transparent;	
+	border-bottom: 80px solid rgb(69, 170, 184);
+	position: absolute;
+	bottom: -100px;
 }
 
-#tabla{
-  width: 40%;
-  height: 40%;
-  margin-left: 30%;
+.leftFoot:after {
+	left:-40px;
 }
-#tabla_n{
-  width: 40%;
-  height: 40%;
-  margin-left: 30%;
+.rightFoot:after {
+	right:-40px;
 }
 
-#Jugar{
-  width: 40%;
-  height: 40%;
-  margin-left: 30%;
-  border-radius: 10px;
+.active-r .cell:after {
+	background-color: rgba(240, 107, 80,0.2);
+	content: ' ';
+	height: 120px;
+	width: 120px;
+	display: block;
+	display:none;
 }
 
-#login{
-  display: inline;
-  margin-left: 30%; 
+.active-y .cell:after {
+	background-color: rgba(225, 215, 114,0.2);
+	content: ' ';
+	height: 120px;
+	width: 120px;
+	display: block;
+	display:none;
 }
 
-#google{
-
-  margin-left: 40%;
+.cell:hover:after {
+	display:block;
 }
 
-#imagen{
-  width: 100px;
-  height: 100px;
-  display: inline;
+.cell.active-r:after {
+	display:block;
+	background-color: rgba(240, 107, 80,0.9);
+}
+.cell.active-y:after {
+	display:block;
+	background-color: rgba(225, 215, 114,0.9);
+}
+
+.reset {
+	background-color:rgb(57, 66, 64);
+	color:white;
+	border:none;
+	padding:10px;
+	font-size:20px;
+	text-align:center;
+	width:10%;
+	margin:0 auto;
+	display:block;
+	margin-bottom:10px;
+}
+
+@media screen and (max-width:600px) {
+	.board {
+		width:252px;
+	}
+	.cell {
+		width:32px;
+		height:32px;
+		border: 2px solid rgb(69, 170, 184);
+	}
 }

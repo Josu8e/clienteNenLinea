@@ -1,52 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="google-signin-client_id" content="185659328824-8ic83csdqrlaho7ftk2ufskhst30h3ic.apps.googleusercontent.com">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <link rel="stylesheet" type="text/css" href="">
-  <title>N en linea</title>
+
+	<title>N_EN_LINEA BOARD</title>
+	<meta name="google-signin-client_id" content="730064414140-pddt1udno397off9gdmj3so2teom4fv8.apps.googleusercontent.com">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+	<script src="N_EN_LINEA_MANAGER.js"></script>
+	<script src="mainController.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+
 </head>
-<body id = "body">
 
-<script src="https://apis.google.com/js/platform.js" async defer></script>
+<body ng-app="nEnLinea" ng-controller="boardController" id="body">
+
+	<div class="bs-example">
+			<nav class="navbar navbar-default">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+				</div>
+				<!-- Collection of nav links and other content for toggling -->
+				<div id="navbarCollapse" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							<a href="" id="btn2" ng-click="setUpGame()"  data-toggle="modal" data-target="#myModal">Nuevo Juego</a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="" class="g-signin2" data-onsuccess="onSignIn" id="login-btn"></a>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<img src="" id="user_foto" style="text-align:center;" width="50" height="50" alt="">
+						</li>
+					</ul>
+				</div>
+			</nav>
+	</div>
+
+	<!-- Alert -->
+	<div style="display:none" id="alert">
+			<div class="alert alert-info" id="alert-winner">
+				<a href="#" class="close" data-dismiss="alert">&times;</a>
+			</div>
+	</div>
+
+	<div class="board" id="table" ng-show="boardVisible">
+			<!-- <span class="row" ng-repeat="row in cells track by $index">
+				<div ng-repeat="cell in row track by $index" class="cell" id = {{cells[$parent.$index][$index]}}></div>
+				<p style="clear:both;"></p>				
+			</span>  -->
+	</div>
+
+	<div>
+			<!-- <img src="" id="user_foto" style="text-align:center;"> -->
+			<!-- <div id="login-btn">
+					<div class="g-signin2" data-onsuccess="onSignIn"></div>
+			</div>
+			 -->
+			<!-- <button id="btn2" ng-click="setUpGame()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Nuevo Juego</button> -->
+	</div>
 
 
+	<!-- Modal -->
+	
+	<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			  <!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				  <h4 class="modal-title">Configuración del juego</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="usr">Tamaño de la fila</label>
+						<select class="form-control show-tick" ng-model="rowSize">
+								<option value= "5">5</option>
+								<option value= "8">8</option>
+								<option value= "10">10</option>
+								<option value= "12">12</option>
+						</select>
+					</div>
 
-<h1>N en linea</h1>
-<p class="info"> N en linea es un juego de dos jugadores, se puede jugar con un adversario en el mismo computador.</p>
-
-
-
-
-	<div class="g-signin2" data-onsuccess="onSignIn" id="google"></div>
-	<div id="login">
-  		
-
-  	</div>
-  	<br>
-
-  <input type="number" id="tabla" placeholder="Defina el tamaño de la tabla : 8"><br>
-  <br>
-  <input type="number" id="tabla_n" placeholder="Defina la cantidad de fichas a conectar : 4">
-  <br>
-  <br>
-  <button onclick="newgame()" id="Jugar">Jugar</button>
-
-
- <br>
- <br>
- <br>
-  <div id="game-table">
-    
-  </div>
-</div><!-- end base -->
+					<div class="form-group">
+							<label for="usr">Seguidas para ganar</label>
+							<input type="text" class="form-control" ng-model="steps2Win">
+					</div>
+				</div>
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="newGame()">Aceptar</button>
+				</div>
+			</div>
+		  
+		</div>
+	</div>
 
 </body>
-<footer>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
-<script src="logica2.js"></script>
-
-
-</footer>
 </html>

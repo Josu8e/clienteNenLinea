@@ -1,190 +1,187 @@
-var gameField = new Array();
-var board = document.getElementById("game-table");
-var currentCol;
-var currentRow;
-var currentPlayer;
-var id = 1;
-var boardSize = 8;
+/*
+X es el color rojo y "O" es el amarillo.
+por defecto se crea un tablero de 7x7.
+falta hacer que el tablero se adapte a algún tamaño indicado
+Utilizo JQUERY con CDN para que lo tome en cuenta.
+Hay que validar que no se exceda el limite de fichas en una columna, que no se revalsen las fichas.
+*/
 
-newgame();
 
-function newgame(){
-  //boardSize = parseInt(document.getElementById("tabla").value);
-  prepareField();
-  placeDisc(Math.floor(Math.random()*2)+1);
+function TableManager(layout){
+
+	this.layout = layout;//El parametro layout es el elemento html(nodo div contenedor) que el objeto TableManager usará para crear el tablero.
+	this.size = null; //tamaño de la fila.
+	this.WS = "https://nenlinea-rails.herokuapp.com/";
+	this.gameState = null;
+	this.tableSize = null;
+	this.actualPlayer = "X"; //Por defecto se asume que inicia el jugador "X".
+	this.cells = []; //arrreglo donde se guardan las celdas o nodos que representan las celdas del tablero en el html.
+	this.oldColor = "red"; //como por default esta "X" entonces por default inicia su color "red".
+	var self = this;
+
+	//Agrega escuchadores click a cada celda o nodo html.
+	this.addEventListenersToCells = function(){
+		for (i = 0; i<this.cells.length;i++){
+			this.cells[i].on("click",function(){
+				var position = parseInt($(this).attr('id'));
+				var columna = self.getColumnOfPlainPosition(position);
+				self.putVirtualCoin(columna);
+			});
+
+		}
+	}
+
+	//Borra todo el tablero de la vista(html) y solo deja el div que es el contenedor(layout).
+	this.reset = function(){
+		this.layout.empty();
+		this.cells = [];
+	}
+
+	//Esta funcion crea el tablero del tamaño especificado en la vista(html).
+	//Este metodo es utilizado por el metodo "createNewGame".
+	this.createBoard = function(){
+
+		if (this.size != null){
+			for (i = 0; i<this.size;i++){
+				var span = $('<span/>',{class:'fila'});
+				for (j = 0; j<this.size;j++){
+					var div = $('<div/>',{class:'cell',id:this.transformCoordToPlainPosition(i,j)});
+					div.appendTo(span);
+				
+					this.cells.push(div);
+				}
+				var par = $('<p/>',{css:"clear:both"});
+				par.appendTo(span);
+				span.appendTo(this.layout);
+			}
+
+			//Se crean los pies del tablero.
+			// $('<div/>',{class:'leftFoot'}).appendTo(this.layout);
+			// $('<div/>',{class:'rightFoot'}).appendTo(this.layout);
+		}
+	}
+
+	//rowSize es el tamaño que va a tener el tablero y nToWin es la cantidad de fichas que se necesitan para ganar.
+	this.createNewGame = function(rowSize,nToWin){
+
+		var s,gs,ts = null;
+
+		$.ajax({
+	        url: this.WS + "logica/new/"+ rowSize +"/"+nToWin,
+	        success: function (jsonResponse) {
+	            if (jsonResponse.isOk != false){ //si la respuesta del servidor fue un éxito....
+	            	s = jsonResponse.tamFila;
+	            	gs = jsonResponse.game_state;
+	            	ts = jsonResponse.tamTablero;
+	            }
+	        },
+	        async: false
+    	});
+
+		this.size = s;
+		this.gameState = gs;
+		this.tableSize = ts;
+		this.actualPlayer = "X";
+
+    	this.reset(); //se limpa el tablero en el html y en la parte logica de javascript(el arreglo cells).
+    	this.createBoard(); //se crea el tablero de nuevo.
+		this.addEventListenersToCells();
+		
+		document.getElementById('alert').style.display = 'none';
+	}
+
+	this.paintCell = function(plainPosition){
+		var color = "";
+		if (this.actualPlayer == "X"){
+			color = "red";
+		}
+		else{
+			color = "yellow";
+		}
+		this.cells[plainPosition].css("background-color",color);
+	}
+
+	this.resetPointer = function(){
+		$(".cell").off();
+	}
+
+	//Esta funcion muestra las posiciones donde el jugador ganó, se recibe como argumento las posiciones(arreglo), no en coordenadas.
+	this.showWinnerCoins = function(positions){
+		for (i = 0; i< positions.length;i++){
+
+			//{width: '300px', opacity: '0.8'}, "slow"
+			this.cells[positions[i]].animate({opacity: '0.5'}, "slow");
+			//this.cells[positions[i]].css("background-color", 'blue');
+
+		}
+	}
+ 
+ 	//Este metodo coloca una ficha en el tablero(se lo ordena al web service), luego pinta la posicion indicada por el web service.
+	this.putVirtualCoin = function(column){ //WhoDidIt es relativo a quien hizo la jugada.
+
+		if (this.gameState == "Playing"){
+			var actPlayer,row,column,plainPosition,gState,winnerCoins = null;
+			$.ajax({
+		        url: this.WS + "logica/mover/"+ column,
+		        success: function (jsonObject) {
+		            if (jsonObject.isOk != false){
+		            	row = jsonObject.fila;
+		            	column = jsonObject.columna;
+		            	actPlayer = jsonObject.turno;
+		            	gState = jsonObject.game_state;
+		            	winnerCoins = jsonObject.fichas_ganadoras;
+		            }
+		        },
+		        async: false
+    		});
+
+    		plainPosition = this.transformCoordToPlainPosition(row,column);
+    		//Se pinta el circulo en la vista(html) en la posicion indicada por el web service.
+    		this.paintCell(plainPosition);
+
+    		this.actualPlayer = actPlayer;
+
+    		this.gameState = gState;
+
+    		if (this.gameState != "Playing"){
+    			this.showWinnerCoins(winnerCoins);
+				this.resetPointer();
+				document.getElementById('alert').style.display = 'inline';
+				var alertWinner = document.getElementById('alert-winner');
+				var winner = (actPlayer === 'X') ? 'Rojo' : 'Amarillo';
+				var text = $('<strong>' + 'Gana ' + winner + '</strong>');
+				text.appendTo(alertWinner);
+    		}
+
+		}
+		else{
+			alert("CREA UN TABLERO NUEVO PARA COMENZAR");
+		}
+	}
+
+	//Trasforma coordenada a posicion plana de un arreglo unidimensional.
+	this.transformCoordToPlainPosition = function(row,column){
+		return this.size*row+column;
+	}
+
+	//Transforma desde una posicion de arreglo unidimensional a su columna correspondiente en una matriz.
+	this.getColumnOfPlainPosition = function(plainPosition){
+		return plainPosition % this.size;
+	}
+
+	this.getRowPosition = function(plainPosition){
+		return parseInt(plainPosition / this.size);
+	}
 }
 
-function checkForVictory(row,col){
-  if(getAdj(row,col,0,1)+getAdj(row,col,0,-1) > 2){
-    return true;
-  } else {
-    if(getAdj(row,col,1,0) > 2){
-      return true;
-    } else {
-      if(getAdj(row,col,-1,1)+getAdj(row,col,1,-1) > 2){
-        return true;
-      } else {
-        if(getAdj(row,col,1,1)+getAdj(row,col,-1,-1) > 2){
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  }
+
+function onSignIn(googleUser) {
+	var profile = googleUser.getBasicProfile();
+	$('#user_foto').attr("src", profile.getImageUrl());
+	document.getElementById("login-btn").remove();
+	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+	console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 }
 
-function getAdj(row,col,row_inc,col_inc){
-  if(cellVal(row,col) == cellVal(row+row_inc,col+col_inc)){
-    return 1+getAdj(row+row_inc,col+col_inc,row_inc,col_inc);
-  } else {
-    return 0;
-  }
-}
-
-function cellVal(row,col){
-  if(gameField[row] == undefined || gameField[row][col] == undefined){
-    return -1;
-  } else {
-    return gameField[row][col];
-  }
-}
-
-function firstFreeRow(col,player){
-  for(var i = 0; i<6; i++){
-    if(gameField[i][col]!=0){
-      break;
-    }
-  }
-  gameField[i-1][col] = player;
-  return i-1;
-}
-
-function possibleColumns(){
-  var moves_array = new Array();
-  for(var i=0; i<7; i++){
-    if(gameField[0][i] == 0){
-      moves_array.push(i);
-    }
-  }
-  return moves_array;
-}
-
-function think(){
-  var possibleMoves = possibleColumns();
-  var aiMoves = new Array();
-  var blocked;
-  var bestBlocked = 0;
-  
-  for(var i=0; i<possibleMoves.length; i++){
-    for(var j=0; j<6; j++){
-      if(gameField[j][possibleMoves[i]] != 0){
-        break;
-      }
-    }
-    
-    gameField[j-1][possibleMoves[i]] = 1;
-    blocked = getAdj(j-1,possibleMoves[i],0,1)+getAdj(j-1,possibleMoves[i],0,-1);
-    blocked = Math.max(blocked,getAdj(j-1,possibleMoves[i],1,0));
-    blocked = Math.max(blocked,getAdj(j-1,possibleMoves[i],-1,1));
-    blocked = Math.max(blocked,getAdj(j-1,possibleMoves[i],1,1)+getAdj(j-1, possibleMoves[i],-1,-1));
-    
-    if(blocked >= bestBlocked){
-      if(blocked>bestBlocked){
-        bestBlocked = blocked;
-        aiMoves = new Array();
-      }
-      aiMoves.push(possibleMoves[i]);
-    }
-    gameField[j-1][possibleMoves[i]] = 0;
-  }
-  
-  return aiMoves;
-}
-
-function Disc(player){
-  this.player = player;
-  this.color = player == 1 ? 'red' : 'yellow';
-  this.id = id.toString();
-  id++;
-  
-  this.addToScene = function(){
-    board.innerHTML += '<div id="d'+this.id+'" class="disc '+this.color+'"></div>';
-    if(currentPlayer==2){
-      //computer move
-      var possibleMoves = think();
-      var cpuMove = Math.floor( Math.random() * possibleMoves.length);
-      currentCol = possibleMoves[cpuMove];
-      document.getElementById('d'+this.id).style.left = (14+60*currentCol)+"px";
-      dropDisc(this.id,currentPlayer);
-    }
-  }
-  
-  var $this = this;
-  document.onmousemove = function(evt){
-    if(currentPlayer == 1){
-    currentCol = Math.floor((evt.clientX - board.offsetLeft)/60);
-    if(currentCol<0){currentCol=0;}
-    if(currentCol>6){currentCol=6;}
-    document.getElementById('d'+$this.id).style.left = (14+60*currentCol)+"px";
-    document.getElementById('d'+$this.id).style.top = "-55px";
-    }
-  }
-  document.onload = function(evt){
-    if(currentPlayer == 1){
-    currentCol = Math.floor((evt.clientX - board.offsetLeft)/60);
-    if(currentCol<0){currentCol=0;}
-    if(currentCol>6){currentCol=6;}
-    document.getElementById('d'+$this.id).style.left = (14+60*currentCol)+"px";
-    document.getElementById('d'+$this.id).style.top = "-55px";
-    }
-  }
-  
-  document.onclick = function(evt){
-    if(currentPlayer == 1){
-      if(possibleColumns().indexOf(currentCol) != -1){
-        dropDisc($this.id,$this.player);
-      }
-    }
-  }
-}
-
-function dropDisc(cid,player){
-  currentRow = firstFreeRow(currentCol,player);
-  moveit(cid,(14+currentRow*60));
-  currentPlayer = player;
-  checkForMoveVictory();
-}
-
-function checkForMoveVictory(){
-  if(!checkForVictory(currentRow,currentCol)){
-    placeDisc(3-currentPlayer);
-  } else {
-    var ww = currentPlayer == 2 ? 'Computer' : 'Player';
-    placeDisc(3-currentPlayer);
-    alert(ww+" win!");
-    board.innerHTML = "";
-    newgame();
-  }
-}
-
-function placeDisc(player){
-  currentPlayer = player;
-  var disc = new Disc(player);
-  disc.addToScene();
-}
-
-function prepareField(){
-  gameField = new Array();
-  for(var i=0; i<boardSize; i++){
-    gameField[i] = new Array();
-    for(var j=0; j<boardSize; j++){
-      gameField[i].push(0);
-    }
-  }
-
-}
-
-function moveit(who,where){
-    document.getElementById('d'+who).style.top = where+'px';
-}
