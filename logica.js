@@ -178,6 +178,10 @@ function TableManager(layout){
 function onSignIn(googleUser) {
 	var profile = googleUser.getBasicProfile();
 	$('#user_foto').attr("src", profile.getImageUrl());
+	var userName = $('<a href="">' + profile.getName() + '</a>');
+	var linkName = document.getElementById('username');
+	userName.appendTo(linkName);
+
 	document.getElementById("login-btn").remove();
 	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
 	console.log('Name: ' + profile.getName());

@@ -18,9 +18,10 @@
 
 <body ng-app="nEnLinea" ng-controller="boardController" id="body">
 
+	<!-- Barra de arriba -->
 	<div class="bs-example">
 			<nav class="navbar navbar-default">
-				<!-- Brand and toggle get grouped for better mobile display -->
+				
 				<div class="navbar-header">
 					<button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
 						<span class="sr-only">Toggle navigation</span>
@@ -42,6 +43,11 @@
 						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
+						<li id="username">
+							
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
 						<li>
 							<img src="" id="user_foto" style="text-align:center;" width="50" height="50" alt="">
 						</li>
@@ -57,6 +63,7 @@
 			</div>
 	</div>
 
+	<!-- Tablero -->
 	<div class="board" id="table" ng-show="boardVisible">
 			<!-- <span class="row" ng-repeat="row in cells track by $index">
 				<div ng-repeat="cell in row track by $index" class="cell" id = {{cells[$parent.$index][$index]}}></div>
@@ -64,17 +71,7 @@
 			</span>  -->
 	</div>
 
-	<div>
-			<!-- <img src="" id="user_foto" style="text-align:center;"> -->
-			<!-- <div id="login-btn">
-					<div class="g-signin2" data-onsuccess="onSignIn"></div>
-			</div>
-			 -->
-			<!-- <button id="btn2" ng-click="setUpGame()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Nuevo Juego</button> -->
-	</div>
-
-
-	<!-- Modal -->
+	<!-- Modal de la configuración del tablero -->
 	
 	<div id="myModal" class="modal fade" role="dialog">
 		<div class="modal-dialog">
